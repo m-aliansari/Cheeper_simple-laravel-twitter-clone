@@ -13,9 +13,9 @@ class CheepController extends Controller
     public function index()
     {
         $cheeps = Cheep::with('user')
-        ->latest()
-        ->take(50)
-        ->get();
+            ->latest()
+            ->take(50)
+            ->get();
 
         return view('home', ['cheeps' => $cheeps]);
     }
@@ -33,7 +33,18 @@ class CheepController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'message' => 'required|string|max:255',
+        ], [
+            'message.required' => 'There is nothing to cheep about!',
+            'message.max' => 'Cheep limit exceeded.'
+        ]);
+
+        Cheep::create([
+            'message' => $validated['message'],
+        ]);
+
+        return redirect('/')->with('success','Your cheep has been chirped and is now echoing through the trees!');
     }
 
     /**

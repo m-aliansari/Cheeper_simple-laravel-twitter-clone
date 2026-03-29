@@ -11,10 +11,10 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 
-    --animate-fade-out: fade-out 4s ease-in-out forwards;
+    --animate-fade-out: fade-out 5s ease-in-out forwards;
 
     @keyframes fade-out {
-        0%, 70% {
+        0%, 80% {
             opacity: 1;
         }
 

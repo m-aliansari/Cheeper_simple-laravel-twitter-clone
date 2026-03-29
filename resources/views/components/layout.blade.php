@@ -21,6 +21,21 @@
         </div>
     </nav>
 
+    @if (session('success'))
+        <div class="toast toast-top toast-center">
+            <div class="alert alert-success animate-fade-out">
+                <svg class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24" id="check-mark-circle"
+                    xmlns="http://www.w3.org/2000/svg" class="icon line">
+                    <path id="primary"
+                        d="M12,21h0a9,9,0,0,1-9-9H3a9,9,0,0,1,9-9h0a9,9,0,0,1,9,9h0A9,9,0,0,1,12,21ZM8,11.5l3,3,5-5"
+                        style="fill: none; stroke: rgb(0, 0, 0); stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.5;">
+                    </path>
+                </svg>
+                <span>{{ session('success') }}</span>
+            </div>
+        </div>
+    @endif
+
     <main class="flex-1 container mx-auto px-4 py-8">
         {{ $slot }}
     </main>
