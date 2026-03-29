@@ -1,22 +1,22 @@
 <x-layout>
     <x-slot:title>
-        Home
+        Home Feed
     </x-slot:title>
     <div class="max-w-2xl mx-auto">
-        @forelse ($cheeps as $cheep)
-            <div class="card bg-base-100 shadow mt-8">
-                <div class="card-body">
-                    <div>
-                        <div class="font-semibold">{{ $cheep->user?->name ?? 'Anonymous' }}
-                        </div>
-                        <div class="mt-1">{{ $cheep->message }}</div>
-                        <div class="text-sm text-gray-500 mt-2">{{ $cheep->created_at->diffForHumans() }}
+        <h1 class="text-3xl font-bold mt-8">Latest Cheeps</h1>
+
+        <div class="space-y-4 mt-8">
+            @forelse ($cheeps as $cheep)
+                <x-cheep :cheep="$cheep" />
+            @empty
+                <div class="hero py-12">
+                    <div class="hero-content text-center">
+                        <div>
+                            <p class="mt-4 text-base-content/60">No cheeps yet. Be the first to cheep!</p>
                         </div>
                     </div>
                 </div>
-            </div>
-        @empty
-            <p class="text-gray-500">No cheeps yet. Be the first to cheep!</p>
-        @endforelse
+            @endforelse
+        </div>
     </div>
 </x-layout>
