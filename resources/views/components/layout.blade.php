@@ -16,8 +16,16 @@
             <a href="/" class="btn btn-ghost text-xl">Cheeper</a>
         </div>
         <div class="navbar-end gap-2">
-            <a href="#" class="btn btn-ghost btn-sm">Login</a>
-            <a href="#" class="btn btn-primary btn-sm">Register</a>
+            @auth
+                <span class="text-sm">{{ auth()->user()->name }}</span>
+                <form action="{{ route('logout') }}" method="POST" class="inline">
+                    @csrf
+                    <button type="submit" class="btn btn-ghost btn-sm">Logout</button>
+                </form>
+            @else
+                <a href="/login" class="btn btn-ghost btn-sm">Login</a>
+                <a href="{{ route('register') }}" class="btn btn-primary btn-sm">Register</a>
+            @endauth
         </div>
     </nav>
 

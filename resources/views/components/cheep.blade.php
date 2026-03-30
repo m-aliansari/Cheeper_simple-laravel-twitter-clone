@@ -26,22 +26,27 @@
                         </span>
                         <span class="text-base-content/60">.</span>
                         <span class="text-sm text-base-content/60">{{ $cheep->created_at->diffForHumans() }}</span>
+                        @if ($cheep->updated_at->gt($cheep->created_at->addSeconds(5)))
+                            <span class="text-base-content/60">.</span>
+                            <span class="text-base-content/60 text-sm italic">edited</span>
+                        @endif
                     </div>
 
-                    <div class="flex gp-1">
-                        <a href="/cheeps/{{ $cheep->id }}/edit" class="btn btn-ghost btn-xs">
-                            Edit
-                        </a>
-                        <form action="/cheeps/{{ $cheep->id }}" method="POST">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-ghost btn-xs text-error"
-                                onclick="return confirm('Are you sure you want to delete this cheep?')">
-                                Delete
-                            </button>
-                        </form>
-                    </div>
-
+                    @can('update', $cheep)
+                        <div class="flex gp-1">
+                            <a href="/cheeps/{{ $cheep->id }}/edit" class="btn btn-ghost btn-xs">
+                                Edit
+                            </a>
+                            <form action="/cheeps/{{ $cheep->id }}" method="POST">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-ghost btn-xs text-error"
+                                    onclick="return confirm('Are you sure you want to delete this cheep?')">
+                                    Delete
+                                </button>
+                            </form>
+                        </div>
+                    @endcan
                 </div>
                 <p class="mt-1">
                     {{ $cheep->message }}

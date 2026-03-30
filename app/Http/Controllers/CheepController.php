@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cheep;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 
 class CheepController extends Controller
 {
+    use AuthorizesRequests;
     /**
      * Display a listing of the resource.
      */
@@ -40,9 +42,7 @@ class CheepController extends Controller
             'message.max' => 'Cheep limit exceeded.'
         ]);
 
-        Cheep::create([
-            'message' => $validated['message'],
-        ]);
+        auth()->user()->cheeps()->create($validated);
 
         return redirect('/')->with('success', 'Your cheep has been chirped and is now echoing through the trees!');
     }
@@ -60,6 +60,7 @@ class CheepController extends Controller
      */
     public function edit(Cheep $cheep)
     {
+        $this->authorize('update', $cheep);
         return view('cheeps.edit', compact('cheep'));
     }
 
@@ -68,6 +69,8 @@ class CheepController extends Controller
      */
     public function update(Request $request, Cheep $cheep)
     {
+        $this->authorize('update', $cheep);
+
         $validated = $request->validate([
             'message' => 'required|string|max:255',
         ], [
@@ -85,6 +88,8 @@ class CheepController extends Controller
      */
     public function destroy(Cheep $cheep)
     {
+        $this->authorize('update', $cheep);
+
         $cheep->delete();
 
         return redirect('/')->with('success', 'Your cheep has been removed from existence and we left no trace of it in the forest!');
