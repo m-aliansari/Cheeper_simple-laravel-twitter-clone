@@ -42,9 +42,7 @@
                         <!-- Remember Me -->
                         <div class="form-control mt-4">
                             <label class="label cursor-pointer justify-start">
-                                <input type="checkbox"
-                                       name="remember"
-                                       class="checkbox">
+                                <input type="checkbox" name="remember" class="checkbox">
                                 <span class="label-text ml-2">Remember me</span>
                             </label>
                         </div>
@@ -56,6 +54,12 @@
                             </button>
                         </div>
                     </form>
+
+                    <div class="divider">OR</div>
+                    <p class="text-center text-sm">
+                        Don't have an account?
+                        <a href="/register" class="link link-primary">Register</a>
+                    </p>
                 </div>
             </div>
         </div>
