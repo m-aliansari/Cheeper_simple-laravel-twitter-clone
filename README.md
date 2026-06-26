@@ -1,58 +1,102 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Cheeper 🐤
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A Twitter-style microblogging app where users post short 255-character messages called **Cheeps**. Built as a learning project on Laravel with server-rendered Blade views, it covers the full CRUD lifecycle, hand-rolled authentication, policy-based authorization, and a daisyUI interface with light/dark theming.
 
-## About Laravel
+![Cheeper home feed](docs/screenshots/home.PNG)
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Features
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **Public feed** — the home page shows the 50 latest cheeps from everyone, no login required.
+- **Post cheeps** — authenticated users share messages up to 255 characters, validated on both the form and the database column.
+- **Edit & delete your own cheeps** — owners get Edit/Delete controls on their cheeps; a `CheepPolicy` ensures no one can touch someone else's.
+- **Authentication** — register, log in, and log out. Registration creates the account and signs the user in immediately.
+- **Light & dark mode** — a sun/moon toggle in the navbar switches themes and remembers your choice; with no saved choice the app follows your operating system's preference.
+- **Themed, playful UX** — friendly flash messages and validation copy (e.g. _"There is nothing to cheep about!"_).
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Manage your own cheeps
 
-## Learning Laravel
+Logged-in users see Edit and Delete actions only on the cheeps they authored.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+![Editing and deleting your own cheeps](docs/screenshots/edit-delete-own-cheeps.PNG)
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Register an account
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+![Create account page in light mode](docs/screenshots/Register-page.PNG)
 
-## Agentic Development
+## Tech Stack
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+| Layer       | Technology                              |
+| ----------- | --------------------------------------- |
+| Backend     | Laravel 13, PHP 8.3                      |
+| Frontend    | Blade, Tailwind CSS v4, daisyUI, Vite   |
+| Database    | SQLite (default)                        |
+| Testing     | Pest                                    |
+| Formatting  | Laravel Pint                            |
+
+## Getting Started
+
+### Prerequisites
+
+- PHP 8.3+ with Composer
+- Node.js & npm
+
+### Setup
 
 ```bash
-composer require laravel/boost --dev
+# Clone the repository
+git clone <repository-url>
+cd cheeper
 
-php artisan boost:install
+# Install dependencies, copy .env, generate an app key, migrate, and build assets
+composer setup
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+### Run the dev environment
 
-## Contributing
+```bash
+# Runs the PHP server, queue listener, and Vite together
+composer dev
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Then visit the URL printed by the server (typically <http://localhost:8000>).
 
-## Code of Conduct
+You can also run the pieces individually:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+php artisan serve   # PHP dev server
+npm run dev         # Vite with hot reload
+npm run build       # Production asset build
+```
 
-## Security Vulnerabilities
+### Seed sample data (optional)
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+`CheepSeeder` creates sample users and cheeps. It is standalone and must be invoked explicitly:
+
+```bash
+php artisan db:seed --class=CheepSeeder
+```
+
+## Testing & Formatting
+
+```bash
+composer test                 # Run the Pest test suite
+php artisan test --filter=Foo # Run a single test by name
+
+./vendor/bin/pint             # Format code
+./vendor/bin/pint --test      # Check formatting without making changes
+```
+
+Tests run against an in-memory SQLite database, separate from your local `database/database.sqlite`.
+
+## How It Works
+
+Cheeper follows a standard Laravel MVC structure built around two models — `User` and `Cheep` (one-to-many: a user has many cheeps).
+
+- **Routing** (`routes/web.php`) — the public feed is open; cheep create/edit/update/delete are grouped behind `auth` middleware.
+- **Auth** — hand-rolled (no Breeze/Jetpack). Each action (`Login`, `Logout`, `Register`) is its own invokable controller under `app/Http/Controllers/Auth/`.
+- **Authorization** — `CheepPolicy` allows only a cheep's owner to update or delete it; the policy is auto-discovered by Laravel's naming convention.
+- **Theming** — daisyUI is configured with a light (`lofi`) default and a `dark` theme that activates on system preference, plus a navbar toggle that persists the user's choice via `localStorage`.
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
